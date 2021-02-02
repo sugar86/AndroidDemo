@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/gridLayout1"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:columnCount="4"
+    android:rowCount="6"
+    tools:context=".RelativeActivity"
+    >
+
+    <TextView
+        android:layout_columnSpan="4"
+        android:layout_gravity="fill"
+        android:layout_margin="5dp"
+        android:background="#ffc"
+        android:text="0."
+        android:textSize="50sp"
+        android:gravity="right"
+        />
+
+    <Button
+        android:layout_columnSpan="2"
+        android:gravity="fill"
+        android:text="回退"
+        android:textSize="50sp"
+        />
+
+    <Button
+        android:layout_alignParentRight="true"
+        android:layout_columnSpan="2"
+        android:gravity="right"
+        android:text="清空"
+        android:textSize="50sp"
+        />
+
+    <Button android:text="+"></Button>
+    <Button android:text="1"></Button>
+    <Button android:text="2"></Button>
+    <Button android:text="3"></Button>
+    <Button android:text="-"></Button>
+    <Button android:text="4"></Button>
+    <Button android:text="5"></Button>
+    <Button android:text="6"></Button>
+    <Button android:text="X"></Button>
+    <Button android:text="7"></Button>
+    <Button android:text="8"></Button>
+    <Button android:text="9"></Button>
+    <Button android:text="/"></Button>
+    <Button android:text="."></Button>
+    <Button android:text="0"></Button>
+    <Button android:text="="></Button>
+</GridLayout>
