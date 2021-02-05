@@ -1,16 +1,53 @@
 package com.sugar.demo.utils;
 
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.os.Environment;
+import android.os.StrictMode;
+import android.util.Log;
+
+import androidx.core.app.ActivityCompat;
+
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
 public class HttpDownloader {
-    private URL url = null;
+
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE};
+
+    /**
+     * android 6.0之上的系统除了添加权限还要在你报错的代码前面添加请求权限的代码
+     */
+    public void checkPermission(Context mContext) {
+        // 如果是主线程下载，要添加下面两行代码
+        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectDiskReads().detectDiskWrites().detectNetwork().penaltyLog().build());
+        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectLeakedSqlLiteObjects().penaltyLog().penaltyDeath().build());
+
+        // Check if we have write permission
+        int permission = ActivityCompat.checkSelfPermission(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions((Activity)mContext, PERMISSIONS_STORAGE, REQUEST_EXTERNAL_STORAGE);
+        }
+    }
 
     /**
      * 读取文本文件
@@ -22,13 +59,14 @@ public class HttpDownloader {
      * 3.得到InputStream
      * 4.从InputStream中得到数据
      */
-    public String download(String urlStr) {
+    public String download(Context mContext, String urlStr) {
+        checkPermission(mContext);
         StringBuffer sb = new StringBuffer();
         String line = null;
         BufferedReader bufferedReader = null;
 
         try {
-            url = new URL(urlStr);
+            URL url = new URL(urlStr);
             //创建http连接
             HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
             //使用IO流读取数据
@@ -37,14 +75,10 @@ public class HttpDownloader {
                 sb.append(line);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            LogUtil.e("download error. url:" + urlStr, e);
         }
         finally {
-            try {
-                bufferedReader.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            if (bufferedReader != null) try {bufferedReader.close();} catch (IOException e) {e.printStackTrace();}
         }
         LogUtil.e("下载txt文件");
         LogUtil.e(sb.toString());
@@ -55,33 +89,21 @@ public class HttpDownloader {
      * 读取任何文件
      * 返回-1 ，代表下载失败。返回0，代表成功。返回1代表文件已经存在
      */
-    public int downloadFile(String urlStr, String path, String fileName) {
-        InputStream input = null;
+    public boolean downloadFile(Context mContext, String url, String folder, String fileName) {
+        checkPermission(mContext);
+        //InputStream input = null;
         try {
             FileUtil fileUtil = new FileUtil();
-            if (fileUtil.isFileExist(path + fileName)) {
-                return 1;
-            } else {
-                input = getInputStearmFormUrl(urlStr);
-                File resultFile = fileUtil.write2SDFromInput(path, fileName, input);
-                if (resultFile == null)
-                    return -1;
-            }
-        } catch (IOException e) {
-            LogUtil.e("downlaodFile error.", e);
-            return -1;
-        }
-        finally {
-            if (input != null) try {input.close();} catch (IOException e) {e.printStackTrace(); }
-        }
-        return  0;
-    }
+            if (fileUtil.isFileExist(folder + fileName))
+                return false;
 
-    /** get InputStream */
-    public InputStream getInputStearmFormUrl(String urlStr) throws IOException {
-        url = new URL(urlStr);
-        HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
-        InputStream input = urlConn.getInputStream();
-        return input;
+            //return fileUtil.downloadByMainThread(folder, fileName, url);
+
+            fileUtil.downloadByOkhttp(folder, fileName, url);
+            return true;
+        } catch (Throwable e) {
+            LogUtil.e("downlaodFile error.", e);
+            return false;
+        }
     }
 }
