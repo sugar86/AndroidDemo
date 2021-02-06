@@ -2,15 +2,22 @@ package com.sugar.demo.activities;
 
 import java.io.File;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
+import androidx.annotation.RequiresApi;
 
 import com.sugar.demo.R;
 import com.sugar.demo.common.GlobalMethod;
@@ -27,12 +34,24 @@ public class AudioMp3Activity extends Activity {
     private Button stopButton;
     private int index = 0;
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    // @SuppressLint("NewApi")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.audio_mp3);
         mContext = this;
-        GlobalMethod.checkPermission(this);
+        GlobalMethod.checkPermission(this); // 提前申请权限
+
+        // 申请加入白名单
+        try {
+            if (!isIgnoringBatteryOptimizations()) {
+                requestIgnoreBatteryOptimizations();
+            }
+        } catch (Throwable e){
+            // e.printStackTrace();
+        }
+
         playButton = (Button)findViewById(R.id.playButton);
         stopButton = (Button)findViewById(R.id.stopButton);
 
@@ -169,5 +188,32 @@ public class AudioMp3Activity extends Activity {
             // mMediaPlayer.stop();
         });
         return mMediaPlayer;
+    }
+
+    /**
+     * 判断应用是否在白名单中
+     */
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private boolean isIgnoringBatteryOptimizations() {
+        boolean isIgnoring = false;
+        PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        if (powerManager != null) {
+            isIgnoring = powerManager.isIgnoringBatteryOptimizations(getPackageName());
+        }
+        return isIgnoring;
+    }
+
+    /**
+     * 申请加入白名单
+     */
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public void requestIgnoreBatteryOptimizations() {
+        try {
+            Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+            intent.setData(Uri.parse("package:" + getPackageName()));
+            startActivity(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

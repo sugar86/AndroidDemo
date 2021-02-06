@@ -44,6 +44,8 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <!-- Android O 安装位置应用权限-->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <!-- 白名单 -->
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <!-- 访问闪光灯
     <uses-permission android:name="android.permission.FLASHLIGHT" />-->
@@ -63,7 +65,7 @@
         <!-- .activities.AudioTrackActivity -->
         <!-- .activities.AudioMp3Activity -->
         <!-- .activities.AudioRecordActivity -->
-        <activity android:name=".activities.AudioRecordActivity">
+        <activity android:name=".activities.AudioMp3Activity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
