@@ -2,7 +2,6 @@ package com.sugar.demo.activities;
 
 import java.io.File;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -68,6 +67,9 @@ public class AudioMp3Activity extends Activity {
                 stopButton.setEnabled(false);
             }
         });
+
+        // 启动就播放音乐
+        playOrPause();
     }
 
     /** 播放MP3 */
@@ -88,9 +90,11 @@ public class AudioMp3Activity extends Activity {
             boolean createState = false;
             if(mediaPlayer == null) {
                 if (index++ % 2 == 1)
-                    mediaPlayer = createNetMp3();
+                    //mediaPlayer = createNetMp3();
+                    //mediaPlayer = createLocalMp3("/sdcard/remember-me/audio/myhome.mp3");
+                    mediaPlayer = createLocalMp3("/sdcard/remember-me/audio/caniusethe.mp4");
                 if (mediaPlayer == null)
-                    mediaPlayer = createLocalMp3();
+                    mediaPlayer = createLocalMp3(null);
 
                 if (mediaPlayer == null) {
                     LogUtil.e("not source to play, mediaPlayer is null.");
@@ -153,10 +157,11 @@ public class AudioMp3Activity extends Activity {
      * 创建网络mp3
      */
     public MediaPlayer createNetMp3(){
-        String url = "https://www.zlsaas.com/guide/myhome.mp3";
+        //String url = "https://www.zlsaas.com/guide/myhome.mp3";
+        String fileName = "/sdcard/remember-me/audio/best.3gpp";
         MediaPlayer mediaPlayer = null;
         try {
-            mediaPlayer = MediaPlayer.create(getApplicationContext(), Uri.parse(url));
+            mediaPlayer = MediaPlayer.create(getApplicationContext(), Uri.parse(fileName));
             LogUtil.i("准备播放网络 mp3");
         } catch (Exception e) {
             e.printStackTrace();
@@ -168,12 +173,14 @@ public class AudioMp3Activity extends Activity {
     /**
      * 创建本地MP3
      */
-    public MediaPlayer createLocalMp3() {
+    public MediaPlayer createLocalMp3(String fileName) {
         //String fileName = Environment.getExternalStorageDirectory()+"/remember-me/audio/Recording.m4a";
-        String fileName = "/sdcard/remember-me/audio/best.3gpp";
+        if (fileName == null)
+            fileName = "/sdcard/remember-me/audio/best.3gpp";
 
         MediaPlayer mMediaPlayer;
         try {
+            // MediaPlayer 可以加载音频，也可以加载视频
             mMediaPlayer = MediaPlayer.create(getApplicationContext(), Uri.fromFile(new File(fileName)));
             if (mMediaPlayer == null) // if the file can not be read.
                 return null;

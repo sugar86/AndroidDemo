@@ -34,8 +34,10 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <!-- 修改系统声音 -->
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-    <!-- 读取联系人 -->
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <!-- 读取联系人
+    <uses-permission android:name="android.permission.READ_CONTACTS" /> -->
+    <!-- 发短信
+    <uses-permission android:name="android.permission.SEND_SMS" /> -->
     <!-- 拨打电话 -->
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <!-- 允许开机自动运行 -->
@@ -46,6 +48,11 @@
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <!-- 白名单 -->
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
+    <uses-permission android:name="android.permission.READ_OWNER_DATA" />
+    <!-- 允许程序禁用键盘锁 -->
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
 
     <!-- 访问闪光灯
     <uses-permission android:name="android.permission.FLASHLIGHT" />-->
@@ -55,6 +62,7 @@
 
     <application
         android:allowBackup="true"
+        android:persistent="true"
         android:usesCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -65,13 +73,35 @@
         <!-- .activities.AudioTrackActivity -->
         <!-- .activities.AudioMp3Activity -->
         <!-- .activities.AudioRecordActivity -->
-        <activity android:name=".activities.AudioMp3Activity">
+        <!-- .activities.AudioMp3ActivityByService -->
+        <!-- .activities.naozhong.NaoZhongMainActivity -->
+        <activity android:name=".activities.naozhong.NaoZhongMainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="com.sugar.demo.activities.naozhong.NaoZhongDialogActivity"
+            android:label="@string/app_name">
+        </activity>
+        <activity android:name="com.sugar.demo.activities.AudioMp3Activity"
+            android:label="@string/app_name">
+        </activity>
+
+        <service android:name="com.sugar.demo.service.AudioMp3Service" />
+
+        <!-- 注册 receiver CallAlarm -->
+        <receiver android:name="com.sugar.demo.activities.naozhong.NaoZhongReceiver"
+            android:process=":remote"
+            android:enabled="true"
+            android:exported="true">
+
+            <!-- 开机广播 -->
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <category android:name="android.intent.category.HOME" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

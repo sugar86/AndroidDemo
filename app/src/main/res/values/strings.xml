@@ -2,4 +2,17 @@
     <string name="app_name">AndroidDemo</string>
     <string name="helloText">Hello, Hi, Hello, Hi, Sugar.Tan! I am the best!</string>
     <string name="play">AudioTrack play</string>
+
+
+
+
+    <string name="hello">naozhong</string>
+    <string name="str_button_setting">设置只响一次</string>
+    <string name="str_button2">删除</string>
+    <string name="str_title1">只响一次</string>
+    <string name="str_title2">重复响多次</string>
+    <string name="str_default">毫无设置</string>
+    <string name="str_text1">设置开始时间</string>
+    <string name="str_text2">重复响</string>
+    <string name="str_text3">秒</string>
 </resources>
