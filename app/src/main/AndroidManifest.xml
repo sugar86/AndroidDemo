@@ -75,7 +75,8 @@
         <!-- .activities.AudioRecordActivity -->
         <!-- .activities.AudioMp3ActivityByService -->
         <!-- .activities.naozhong.NaoZhongMainActivity -->
-        <activity android:name=".activities.naozhong.NaoZhongMainActivity">
+        <!-- .activities.VideoByMediaPlayerActivity -->
+        <activity android:name=".activities.VideoByVideoView">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -87,6 +88,7 @@
         <activity android:name="com.sugar.demo.activities.AudioMp3Activity"
             android:label="@string/app_name">
         </activity>
+        <activity android:name=".activities.VideoBySurfaceView"/>
 
         <service android:name="com.sugar.demo.service.AudioMp3Service" />
 
@@ -102,6 +104,15 @@
                 <category android:name="android.intent.category.HOME" />
             </intent-filter>
         </receiver>
+
+
     </application>
 
+    <!-- 得到屏幕正常的物理尺寸 -->
+    <supports-screens
+        android:smallScreens="true"
+        android:normalScreens="true"
+        android:largeScreens="true"
+        android:resizeable="true"
+        android:anyDensity="true" />
 </manifest>
